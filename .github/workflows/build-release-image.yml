@@ -2,12 +2,13 @@ name: Build release image
 
 on:
   workflow_call:
-    GH_PAT:
-      required: true
-    DOCKER_USERNAME:
-      required: true
-    DOCKER_PASSWORD:
-      required: true
+    secrets:
+      GH_PAT:
+        required: true
+      DOCKER_USERNAME:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
 
 jobs:
   release:
