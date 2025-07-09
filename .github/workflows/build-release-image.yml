@@ -63,7 +63,7 @@ jobs:
 
       - name: Generate changelog
         run: |
-          PREV_TAG=$(git describe --abbrev=0 --tags HEAD^)
+          PREV_TAG=$(git describe --abbrev=0 --tags HEAD)
           VERSION=$(node -p "require('./package.json').version")
           CHANGELOG=$(git log $PREV_TAG..HEAD --pretty=format:"- %s")
           echo -e "## Changelog for v$VERSION\n\n$CHANGELOG" > CHANGELOG.md
