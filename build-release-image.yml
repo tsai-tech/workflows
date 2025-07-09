@@ -1,0 +1,62 @@
+name: Build release image
+
+on:
+  workflow_call:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install deps & build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Bump version and push
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          npm version patch
+          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/${{ github.repository }}.git
+          git push origin HEAD:main --follow-tags
+
+      - name: Build & push Docker image
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+          VERSION=$(node -p "require('./package.json').version")
+          IMAGE_NAME=$(echo "${{ github.repository }}" | tr '/' '-')
+          docker build -t $DOCKER_USERNAME/$IMAGE_NAME:$VERSION .
+          docker push $DOCKER_USERNAME/$IMAGE_NAME:$VERSION
+
+      - name: Create GitHub Release
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          curl -X POST \
+            -H "Authorization: token $GH_PAT" \
+            -H "Content-Type: application/json" \
+            -d "{\"tag_name\": \"$VERSION\", \"name\": \"v$VERSION\", \"body\": \"Release v$VERSION\"}" \
+            https://api.github.com/repos/${{ github.repository }}/releases
+
+      - name: Generate changelog
+        run: |
+          PREV_TAG=$(git describe --abbrev=0 --tags HEAD^)
+          VERSION=$(node -p "require('./package.json').version")
+          CHANGELOG=$(git log $PREV_TAG..HEAD --pretty=format:"- %s")
+          echo -e "## Changelog for v$VERSION\n\n$CHANGELOG" > CHANGELOG.md
