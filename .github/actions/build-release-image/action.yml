@@ -11,15 +11,6 @@ runs:
   using: 'composite'
   steps:
     - run: |
-        git add .
-        git commit -m "Temp commit for clean build"
-        npm ci
-        npm run build
-        npm version patch
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git remote set-url origin https://x-access-token:${{ inputs.GH_PAT }}@github.com/${{ github.repository }}.git
-        git push origin HEAD:main --follow-tags
         VERSION=$(node -p "require('./package.json').version")
         IMAGE_NAME=$(echo "${{ github.repository }}" | tr '/' '-')
         echo "${{ inputs.DOCKER_PASSWORD }}" | docker login -u "${{ inputs.DOCKER_USERNAME }}" --password-stdin
