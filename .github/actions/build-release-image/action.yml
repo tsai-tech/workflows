@@ -11,6 +11,8 @@ runs:
   using: 'composite'
   steps:
     - run: |
+        git add .
+        git commit -m "Temp commit for clean build"
         npm ci
         npm run build
         npm version patch
