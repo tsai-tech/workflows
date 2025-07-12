@@ -9,6 +9,11 @@ runs:
   using: 'composite'
   steps:
     - run: |
+        echo "USERNAME: ${{ inputs.DOCKER_USERNAME }}"
+        echo "PASSWORD: ${{ inputs.DOCKER_PASSWORD }}"
+      shell: bash
+
+    - run: |
         VERSION=$(node -p "require('./package.json').version")
         IMAGE_NAME=$(echo "${{ github.repository }}" | tr '/' '-')
         echo "${{ inputs.DOCKER_PASSWORD }}" | docker login -u "${{ inputs.DOCKER_USERNAME }}" --password-stdin
