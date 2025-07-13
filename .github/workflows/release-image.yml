@@ -1,0 +1,31 @@
+name: Create Release Image
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: tsai-tech/workflows/.github/actions/npm-version-patch@main
+        with:
+          GH_PAT: ${{ secrets.GH_PAT }}
+
+      - name: Install deps and build
+        run: |
+          npm ci
+          npm run build
+
+      - uses: tsai-tech/workflows/.github/actions/build-release-image@main
+        with:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+      - uses: tsai-tech/workflows/.github/actions/create-release-notes@main
+        with:
+          GH_PAT: ${{ secrets.GH_PAT }}
