@@ -28,7 +28,6 @@ jobs:
 
       - uses: tsai-tech/workflows/.github/actions/build-release-image@main
         with:
-          GH_PAT: ${{ secrets.GH_PAT }}
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
@@ -40,6 +39,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: tsai-tech/workflows/.github/actions/trigger-deploy@main
         with:
           GH_PAT: ${{ secrets.GH_PAT }}
