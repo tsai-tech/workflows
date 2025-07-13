@@ -12,4 +12,7 @@ runs:
         npm version patch
         git remote set-url origin https://x-access-token:${{ inputs.GH_PAT }}@github.com/${{ github.repository }}.git
         git push origin HEAD:main --follow-tags
+
+        VERSION=$(node -p "require('./package.json').version")
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
       shell: bash

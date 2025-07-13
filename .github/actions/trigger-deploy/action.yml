@@ -1,6 +1,8 @@
 name: 'Trigger Deploy'
 description: ''
 inputs:
+  VERSION:
+    required: true
   GH_PAT:
     required: true
   PATH_TO_TERRAFORM_FILE:
@@ -9,7 +11,7 @@ runs:
   using: 'composite'
   steps:
     - run: |
-        VERSION=$(node -p "require('./package.json').version")
+        VERSION=${{ inputs.VERSION }}
         
         git clone https://x-access-token:${{ inputs.GH_PAT }}@github.com/tsai-tech/terraform.git
         cd terraform
@@ -21,6 +23,6 @@ runs:
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
         git add "$TARGET_FILE"
-        git commit -m "chore: update version to ${VERSION}"
+        git commit -m "chore: update ${{ github.repository }} version to ${VERSION}"
         git push
       shell: bash

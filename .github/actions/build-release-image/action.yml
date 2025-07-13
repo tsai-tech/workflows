@@ -1,6 +1,8 @@
 name: 'Build and Release Image'
 description: 'Build and push Docker-image, create GitHub Release'
 inputs:
+  VERSION:
+    required: true
   DOCKER_USERNAME:
     required: true
   DOCKER_PASSWORD:
@@ -9,7 +11,8 @@ runs:
   using: 'composite'
   steps:
     - run: |
-        VERSION=$(node -p "require('./package.json').version")
+        VERSION=${{ inputs.VERSION }}
+
         IMAGE_NAME=$(echo "${{ github.repository }}" | tr '/' '-')
         echo "${{ inputs.DOCKER_PASSWORD }}" | docker login -u "${{ inputs.DOCKER_USERNAME }}" --password-stdin
         docker build -t ${{ inputs.DOCKER_USERNAME }}/$IMAGE_NAME:$VERSION .

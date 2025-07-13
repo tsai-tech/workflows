@@ -3,11 +3,14 @@ description: ''
 inputs:
   GH_PAT:
     required: true
+  VERSION:
+    required: true
 runs:
   using: 'composite'
   steps:
     - run: |
-        VERSION=$(node -p "require('./package.json').version")
+        VERSION=${{ inputs.VERSION }}
+
         curl -X POST \
           -H "Authorization: token ${{ inputs.GH_PAT }}" \
           -H "Content-Type: application/json" \
