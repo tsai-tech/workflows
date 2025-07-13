@@ -3,10 +3,15 @@ description: 'Patch version in package.json and commit changes'
 inputs:
   GH_PAT:
     required: true
+outputs:
+  version:
+    description: 'Version after patching'
+    value: ${{ steps.set-version.outputs.version }}
 runs:
   using: 'composite'
   steps:
-    - run: |
+    - id: set-version
+      run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         npm version patch
