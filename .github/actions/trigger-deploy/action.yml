@@ -11,7 +11,7 @@ runs:
     - run: |
         VERSION=$(node -p "require('./package.json').version")
         
-        git clone https://x-access-token:${GH_PAT}@github.com/tsai-tech/target-repo.git
+        git clone https://x-access-token:${GH_PAT}@github.com/tsai-tech/terraform.git
         cd target-repo
         
         TARGET_FILE="${{ inputs.PATH_TO_TERRAFORM_FILE }}"
