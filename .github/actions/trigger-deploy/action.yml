@@ -1,0 +1,26 @@
+name: 'Trigger Deploy'
+description: ''
+inputs:
+  GH_PAT:
+    required: true
+  PATH_TO_TERRAFORM_FILE:
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        VERSION=$(node -p "require('./package.json').version")
+        
+        git clone https://x-access-token:${GH_PAT}@github.com/tsai-tech/target-repo.git
+        cd target-repo
+        
+        TARGET_FILE="${{ inputs.PATH_TO_TERRAFORM_FILE }}"
+
+        sed -E -i "s/(version[[:space:]]*=[[:space:]]*\")[^\"]+(\")/\1${VERSION}\2/" "$TARGET_FILE"
+        
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+        git add "$TARGET_FILE"
+        git commit -m "chore: update version to ${VERSION}"
+        git push
+      shell: bash
