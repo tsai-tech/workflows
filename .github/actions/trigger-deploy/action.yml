@@ -7,6 +7,8 @@ inputs:
     required: true
   PATH_TO_TERRAFORM_FILE:
     required: true
+  PREFIX:
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -17,9 +19,10 @@ runs:
         cd terraform
         
         TARGET_FILE="${{ inputs.PATH_TO_TERRAFORM_FILE }}"
+        PREFIX="${{ inputs.PREFIX }}"
 
-        sed -E -i "s/(version[[:space:]]*=[[:space:]]*\")[^\"]+(\")/\1${VERSION}\2/" "$TARGET_FILE"
-        
+        sed -E -i "s/(^${PREFIX}_version[[:space:]]*=[[:space:]]*\")[^\"]+(\")/\1${VERSION}\2/" "$TARGET_FILE"
+
         git config user.name "GitHub Actions"
         git config user.email "actions@github.com"
         git add "$TARGET_FILE"

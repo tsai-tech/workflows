@@ -10,7 +10,8 @@ on:
         required: true
       PATH_TO_TERRAFORM_FILE:
         required: true
-
+      PREFIX:
+        required: true
 jobs:
   npm-version-patch:
     runs-on: ubuntu-latest
@@ -67,3 +68,4 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
           PATH_TO_TERRAFORM_FILE: ${{ secrets.PATH_TO_TERRAFORM_FILE }}
           VERSION: ${{ needs.npm-version-patch.outputs.version }}
+          PREFIX: ${{ secrets.PREFIX }}
