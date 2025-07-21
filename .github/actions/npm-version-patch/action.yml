@@ -10,6 +10,9 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
     - id: set-version
       run: |
         git config user.name "github-actions[bot]"
